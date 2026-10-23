@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="uz" translate="no" class="notranslate">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qamashi IT Centre</title>
+  <meta name="description" content="Qamashi IT Centre — dasturlash, sun’iy intellekt, Data Science va veb-dasturlash kurslari.">
+  <meta name="theme-color" content="#05070f">
+  <meta name="google" content="notranslate">
+  <meta name="yandex-tableau-widget" content="">
+  <link rel="icon" href="assets/images/qamashi-mark.png">
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/features.css">
+</head>
+<body class="notranslate">
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">Asosiy mazmunga o‘tish</a>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div id="sky" class="sky" aria-hidden="true">
+    <div class="sky-layer sky-clouds"><span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span><span class="cloud c4"></span><span class="cloud c5"></span></div>
+    <div class="sky-shade"></div>
+  </div>
+  <div id="bg-plane" class="bg-plane" aria-hidden="true"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="bp-body" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#6d84a6"/>
+            <stop offset=".3" stop-color="#eef4fc"/>
+            <stop offset=".5" stop-color="#ffffff"/>
+            <stop offset=".72" stop-color="#d3e1f3"/>
+            <stop offset="1" stop-color="#6d84a6"/>
+          </linearGradient>
+          <linearGradient id="bp-wing" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset=".45" stop-color="#d6e4f6"/>
+            <stop offset="1" stop-color="#7f98b9"/>
+          </linearGradient>
+          <linearGradient id="bp-engine" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#5b7394"/>
+            <stop offset=".45" stop-color="#e9f1fb"/>
+            <stop offset="1" stop-color="#5b7394"/>
+          </linearGradient>
+          <linearGradient id="bp-livery" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#38b6ff"/>
+            <stop offset="1" stop-color="#2f6bff"/>
+          </linearGradient>
+          <filter id="bp-blur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.6"/>
+          </filter>
+        </defs>
+
+        <!-- ground shadow -->
+        <g fill="#000a1f" opacity=".42" filter="url(#bp-blur)" transform="translate(7 9)">
+          <path d="M54 44C46 46 30 56 14 68Q10 71 12 76Q14 78 18 76L54 66Z M66 44C74 46 90 56 106 68Q110 71 108 76Q106 78 102 76L66 66Z"/>
+          <path d="M60 3C65 3 68 9 68.5 18L69 92Q69 103 65 110Q62 114 60 114Q58 114 55 110Q51 103 51 92L51.5 18C52 9 55 3 60 3Z"/>
+        </g>
+
+        <!-- wings -->
+        <path d="M54 44C46 46 30 56 14 68Q10 71 12 76Q14 78 18 76L54 66Z M66 44C74 46 90 56 106 68Q110 71 108 76Q106 78 102 76L66 66Z"
+          fill="url(#bp-wing)" stroke="#5f7898" stroke-width=".9" stroke-linejoin="round"/>
+        <path d="M51 49 22 65M69 49 98 65" stroke="#ffffff" stroke-width="1" opacity=".7" stroke-linecap="round"/>
+        <circle cx="12.5" cy="72.5" r="2.2" fill="#ff3b5c"/>
+        <circle cx="107.5" cy="72.5" r="2.2" fill="#38b6ff"/>
+
+        <!-- engines -->
+        <g>
+          <rect x="29" y="55" width="11" height="19" rx="5.5" fill="url(#bp-engine)" stroke="#5b7394" stroke-width=".6"/>
+          <ellipse cx="34.5" cy="56" rx="3.9" ry="1.6" fill="#0b1d3d"/>
+          <rect x="80" y="55" width="11" height="19" rx="5.5" fill="url(#bp-engine)" stroke="#5b7394" stroke-width=".6"/>
+          <ellipse cx="85.5" cy="56" rx="3.9" ry="1.6" fill="#0b1d3d"/>
+        </g>
+
+        <!-- tail stabilisers -->
+        <path d="M54 92C48 94 40 99 36 104Q34 107 37 107L54 102Z M66 92C72 94 80 99 84 104Q86 107 83 107L66 102Z"
+          fill="url(#bp-wing)" stroke="#5f7898" stroke-width=".8" stroke-linejoin="round"/>
+
+        <!-- fuselage -->
+        <path d="M60 3C65 3 68 9 68.5 18L69 92Q69 103 65 110Q62 114 60 114Q58 114 55 110Q51 103 51 92L51.5 18C52 9 55 3 60 3Z"
+          fill="url(#bp-body)" stroke="#5f7898" stroke-width=".9"/>
+
+        <!-- brand cheat-lines along the fuselage -->
+        <rect x="52.4" y="24" width="2" height="66" rx="1" fill="url(#bp-livery)"/>
+        <rect x="65.6" y="24" width="2" height="66" rx="1" fill="url(#bp-livery)"/>
+
+        <!-- cockpit -->
+        <path d="M54.8 15.5Q60 8.5 65.2 15.5L64.6 21Q60 18.6 55.4 21Z" fill="#12305e" opacity=".92"/>
+        <path d="M57 15.5Q60 12 62.4 15" stroke="#ffffff" stroke-width=".8" fill="none" opacity=".8" stroke-linecap="round"/>
+
+        <!-- passenger windows -->
+        <g fill="#2a4a78" opacity=".55">
+          <circle cx="56.4" cy="32" r=".9"/><circle cx="56.4" cy="37" r=".9"/><circle cx="56.4" cy="42" r=".9"/><circle cx="56.4" cy="47" r=".9"/>
+          <circle cx="56.4" cy="52" r=".9"/><circle cx="56.4" cy="57" r=".9"/><circle cx="56.4" cy="62" r=".9"/><circle cx="56.4" cy="67" r=".9"/>
+          <circle cx="63.6" cy="32" r=".9"/><circle cx="63.6" cy="37" r=".9"/><circle cx="63.6" cy="42" r=".9"/><circle cx="63.6" cy="47" r=".9"/>
+          <circle cx="63.6" cy="52" r=".9"/><circle cx="63.6" cy="57" r=".9"/><circle cx="63.6" cy="62" r=".9"/><circle cx="63.6" cy="67" r=".9"/>
+        </g>
+
+        <!-- specular highlight on the top of the fuselage -->
+        <path d="M58.6 20Q59.4 14 60 14" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".9"/>
+      </svg></div>
+  <span id="bg-label-start" class="bg-label" aria-hidden="true">QAMASHI · AIRPORT</span>
+  <span id="bg-label-end" class="bg-label" aria-hidden="true">DEHLI</span>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#home" aria-label="Qamashi IT Centre">
+        <span class="brand-text">QAMASHI<small>IT CENTRE</small></span>
+        <img class="brand-mark" src="assets/images/qamashi-mark.png" alt="Qamashi IT Centre logotipi" width="38" height="38">
+      </a>
+
+      <nav id="nav" class="nav" aria-label="Asosiy navigatsiya">
+        <a href="#courses" data-i18n="nav.courses">Kurslar</a>
+        <a href="#winners" data-i18n="nav.winners">G‘oliblar</a>
+        <a href="#team" data-i18n="nav.team">Jamoa</a>
+        <a href="#intl" data-i18n="nav.intl">Xalqaro</a>
+        <a href="#region" data-i18n="nav.region">Qashqadaryo</a>
+      </nav>
+
+      <div class="header-tools">
+        <div class="lang" role="group" aria-label="Til / Language">
+          <button type="button" data-lang="uz" aria-pressed="true">UZ</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a class="btn btn-red btn-sm" href="#register" data-i18n="nav.register">Ro‘yxatdan o‘tish</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">
+          <span class="sr-only" data-i18n="nav.menu">Menyu</span>
+          <span class="bars" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- HOME / HERO -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="hero-texture" aria-hidden="true">
+        <span></span>
+        <svg class="hero-network" viewBox="0 0 900 650" preserveAspectRatio="xMidYMid slice">
+          <g class="network-lines">
+            <path d="M78 102 164 105 240 132 246 188"></path>
+            <path d="M164 105 204 153 246 188"></path>
+            <path d="m460 82 4 2m328 172 70-5 48 1"></path>
+            <path d="m520 382 64-92 144 28 86 81 82-32"></path>
+            <path d="m520 382 64 80 60-144m84 0-84 144 104 64 66-97 82 32"></path>
+            <path d="m0 560 98-56 74 38m666 102 34-70 90-13"></path>
+          </g>
+          <g class="network-nodes">
+            <circle cx="78" cy="102" r="2.5"></circle><circle cx="164" cy="105" r="2"></circle>
+            <circle cx="240" cy="132" r="2"></circle><circle cx="246" cy="188" r="2.5"></circle>
+            <circle cx="460" cy="82" r="2.5"></circle><circle cx="792" cy="256" r="2"></circle>
+            <circle cx="862" cy="251" r="2"></circle><circle cx="910" cy="252" r="2"></circle>
+            <circle cx="520" cy="382" r="2"></circle><circle cx="584" cy="290" r="2"></circle>
+            <circle cx="728" cy="318" r="2"></circle><circle cx="814" cy="399" r="2"></circle>
+            <circle cx="896" cy="367" r="2"></circle><circle cx="584" cy="462" r="2"></circle>
+            <circle cx="644" cy="318" r="2"></circle><circle cx="748" cy="526" r="2"></circle>
+            <circle cx="814" cy="429" r="2"></circle><circle cx="98" cy="504" r="2"></circle>
+            <circle cx="172" cy="542" r="2"></circle><circle cx="806" cy="644" r="2"></circle>
+            <circle cx="840" cy="574" r="2"></circle><circle cx="930" cy="561" r="2"></circle>
+          </g>
+          <circle class="network-pulse" cx="286" cy="260" r="24"></circle>
+          <circle class="network-pulse-core" cx="286" cy="260" r="4"></circle>
+        </svg>
+      </div>
+      <div class="hero-tech" aria-hidden="true">
+        <div class="tech-float tech-html"><span class="tech-icon">&lt;/&gt;</span><span>HTML</span></div>
+        <div class="tech-float tech-css"><span class="tech-icon">#</span><span>CSS</span></div>
+        <div class="tech-float tech-js"><span class="tech-icon">JS</span><span>JavaScript</span></div>
+        <div class="tech-float tech-python"><span class="tech-icon">Py</span><span>Python</span></div>
+        <div class="tech-float tech-security">
+          <svg class="tech-shield" viewBox="0 0 32 36" focusable="false">
+            <path d="M16 2 29 7v9c0 8.3-5.4 14.2-13 18C8.4 30.2 3 24.3 3 16V7l13-5Z"></path>
+            <path d="m10.5 17 3.5 3.5 7.5-8"></path>
+          </svg>
+          <span>Kiberxavfsizlik</span>
+        </div>
+      </div>
+
+      <div class="container hero-inner">
+        <h1 id="hero-title" class="hero-title">
+          <span class="hero-line" data-hero-line="1">QAMASHI IT CENTER</span>
+          <span class="hero-line" data-hero-line="2">KELAJAKNI BIZ BILAN QURING</span>
+        </h1>
+        <p id="hero-lead" class="hero-lead">Dasturlash, sun’iy intellekt, ma’lumotlar fani va veb-dasturlash bo‘yicha amaliy IT ta’lim markazi.</p>
+        <div class="hero-actions">
+          <a class="btn btn-red" href="#courses" data-i18n="hero.cta1">Kurslarni ko‘rish</a>
+        </div>
+      </div>
+
+      <a class="scroll-cue" href="#courses" data-i18n="journey.hint">Pastga aylantiring</a>
+    </section>
+
+    <!-- COURSES -->
+    <section class="section" id="courses" aria-labelledby="courses-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="kicker" data-i18n="courses.kicker">Kurslar</p>
+          <h2 id="courses-title" class="h-xl" data-i18n="courses.title">Kasbingizni shu yerda boshlang</h2>
+          <p class="lead" data-i18n="courses.lead">Quyida namuna kurslar ko‘rsatilgan. Davomiylik va narx ma’lumotlari administrator tomonidan kiritiladi.</p>
+        </header>
+
+        <div class="grid grid-courses course-stack" style="--n:6">
+          <div class="stack-slot" style="--i:0"><article class="course-card reveal">
+            <div class="course-art c-python"><svg class="course-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="py-blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7cbcff"/><stop offset=".55" stop-color="#2f6bff"/><stop offset="1" stop-color="#14307a"/></linearGradient>
+                <linearGradient id="py-yellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6b8"/><stop offset=".5" stop-color="#ffd43b"/><stop offset="1" stop-color="#d98a00"/></linearGradient>
+              </defs>
+              <rect x="12" y="16" width="62" height="58" rx="20" fill="url(#py-blue)"/>
+              <rect x="46" y="48" width="62" height="58" rx="20" fill="url(#py-yellow)"/>
+              <rect x="20" y="22" width="46" height="14" rx="7" fill="#fff" opacity=".38"/>
+              <rect x="54" y="54" width="46" height="14" rx="7" fill="#fff" opacity=".55"/>
+              <circle cx="40" cy="42" r="6.5" fill="#fff"/><circle cx="42.5" cy="42" r="2.8" fill="#14307a"/>
+              <circle cx="80" cy="84" r="6.5" fill="#fff"/><circle cx="77.5" cy="84" r="2.8" fill="#8a5a00"/>
+            </svg></div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-course="python" data-role="title">Python dasturlash</h3>
+              <p data-course="python" data-role="desc">Python asoslari, algoritmlar va kichik loyihalar — noldan boshlab.</p>
+              <button class="btn btn-outline" type="button" data-course-select="python" aria-expanded="false" data-i18n="courses.register">Ro‘yxatdan o‘tish</button>
+            </div>
+          </article></div>
+          <div class="stack-slot" style="--i:1"><article class="course-card reveal">
+            <div class="course-art c-ai"><svg class="course-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="ai-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fd0ff"/><stop offset=".6" stop-color="#2f6bff"/><stop offset="1" stop-color="#1b2a7a"/></linearGradient>
+                <radialGradient id="ai-core" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#ffb3c1"/><stop offset="1" stop-color="#ff3b5c"/></radialGradient>
+              </defs>
+              <rect x="31" y="6" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="31" y="98" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="47" y="6" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="47" y="98" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="63" y="6" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="63" y="98" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="79" y="6" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="79" y="98" width="6" height="16" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="6" y="31" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="98" y="31" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="6" y="47" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="98" y="47" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="6" y="63" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="98" y="63" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="6" y="79" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/><rect x="98" y="79" width="16" height="6" rx="3" fill="#bfe9ff" opacity=".9"/>
+              <rect x="20" y="20" width="80" height="80" rx="18" fill="url(#ai-body)"/>
+              <rect x="27" y="25" width="66" height="24" rx="12" fill="#fff" opacity=".22"/>
+              <rect x="44" y="44" width="32" height="32" rx="8" fill="url(#ai-core)"/>
+              <rect x="50" y="50" width="8" height="8" rx="2" fill="#fff" opacity=".85"/>
+            </svg></div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-course="ai" data-role="title">Sun’iy intellekt</h3>
+              <p data-course="ai" data-role="desc">Mashinani o‘qitish asoslari va amaliy AI vositalari bilan ishlash.</p>
+              <button class="btn btn-outline" type="button" data-course-select="ai" aria-expanded="false" data-i18n="courses.register">Ro‘yxatdan o‘tish</button>
+            </div>
+          </article></div>
+          <div class="stack-slot" style="--i:2"><article class="course-card reveal">
+            <div class="course-art c-data"><svg class="course-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="ds-front" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fe6ff"/><stop offset=".5" stop-color="#3d86ff"/><stop offset="1" stop-color="#1a3f9a"/></linearGradient>
+                <linearGradient id="ds-top" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e2f8ff"/><stop offset="1" stop-color="#8fdcff"/></linearGradient>
+                <linearGradient id="ds-side" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a5fd6"/><stop offset="1" stop-color="#0f2a6e"/></linearGradient>
+              </defs>
+              <ellipse cx="60" cy="104" rx="50" ry="6" fill="#000a1f" opacity=".35"/>
+              <polygon points="36,62 45,55 45,93 36,100" fill="url(#ds-side)"/><polygon points="18,62 36,62 45,55 27,55" fill="url(#ds-top)"/><rect x="18" y="62" width="18" height="38" rx="3" fill="url(#ds-front)"/><polygon points="69,34 78,27 78,93 69,100" fill="url(#ds-side)"/><polygon points="51,34 69,34 78,27 60,27" fill="url(#ds-top)"/><rect x="51" y="34" width="18" height="66" rx="3" fill="url(#ds-front)"/><polygon points="102,48 111,41 111,93 102,100" fill="url(#ds-side)"/><polygon points="84,48 102,48 111,41 93,41" fill="url(#ds-top)"/><rect x="84" y="48" width="18" height="52" rx="3" fill="url(#ds-front)"/>
+            </svg></div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-course="data" data-role="title">Data Science</h3>
+              <p data-course="data" data-role="desc">Ma’lumotlarni tahlil qilish, vizualizatsiya va statistik asoslar.</p>
+              <button class="btn btn-outline" type="button" data-course-select="data" aria-expanded="false" data-i18n="courses.register">Ro‘yxatdan o‘tish</button>
+            </div>
+          </article></div>
+          <div class="stack-slot" style="--i:3"><article class="course-card reveal">
+            <div class="course-art c-web"><svg class="course-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="wb-glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c3d5f2"/></linearGradient>
+                <linearGradient id="wb-bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f6bff"/><stop offset="1" stop-color="#38b6ff"/></linearGradient>
+              </defs>
+              <rect x="12" y="24" width="96" height="78" rx="14" fill="#0b1431" opacity=".45"/>
+              <rect x="12" y="18" width="96" height="78" rx="14" fill="url(#wb-glass)"/>
+              <path d="M12 32Q12 18 26 18H94Q108 18 108 32V40H12Z" fill="url(#wb-bar)"/>
+              <circle cx="24" cy="29" r="3.4" fill="#ff3b5c"/><circle cx="34" cy="29" r="3.4" fill="#ffd43b"/><circle cx="44" cy="29" r="3.4" fill="#ffffff"/>
+              <path d="M44 62 34 73 44 84" stroke="#2f6bff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M76 62 86 73 76 84" stroke="#2f6bff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M66 56 54 90" stroke="#ff3b5c" stroke-width="6" stroke-linecap="round"/>
+            </svg></div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-course="web" data-role="title">Veb-dasturlash</h3>
+              <p data-course="web" data-role="desc">HTML, CSS, JavaScript va zamonaviy veb-saytlar yaratish.</p>
+              <button class="btn btn-outline" type="button" data-course-select="web" aria-expanded="false" data-i18n="courses.register">Ro‘yxatdan o‘tish</button>
+            </div>
+          </article></div>
+          <div class="stack-slot" style="--i:4"><article class="course-card reveal">
+            <div class="course-art c-smm"><svg class="course-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="sm-blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7cd9ff"/><stop offset=".6" stop-color="#2f6bff"/><stop offset="1" stop-color="#14307a"/></linearGradient>
+                <linearGradient id="sm-pink" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb07a"/><stop offset=".55" stop-color="#ff3b5c"/><stop offset="1" stop-color="#7a1030"/></linearGradient>
+              </defs>
+              <path d="M30 68 L26 90 L50 74 Z" fill="#14307a" opacity=".9"/>
+              <rect x="12" y="20" width="70" height="52" rx="20" fill="url(#sm-blue)"/>
+              <rect x="20" y="26" width="50" height="14" rx="7" fill="#fff" opacity=".35"/>
+              <path d="M90 98 L94 112 L72 98 Z" fill="#7a1030" opacity=".9"/>
+              <rect x="40" y="50" width="68" height="50" rx="20" fill="url(#sm-pink)"/>
+              <rect x="50" y="56" width="46" height="14" rx="7" fill="#fff" opacity=".4"/>
+              <path d="M74 88 C71 80 58 79 58 90 C58 96 68 102 74 106 C80 102 90 96 90 90 C90 79 77 80 74 88 Z" fill="#fff"/>
+            </svg></div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-course="smm" data-role="title">SMM va kontent</h3>
+              <p data-course="smm" data-role="desc">Ijtimoiy tarmoqlarda marketing, kontent yaratish va reklama kampaniyalari.</p>
+              <button class="btn btn-outline" type="button" data-course-select="smm" aria-expanded="false" data-i18n="courses.register">Ro‘yxatdan o‘tish</button>
+            </div>
+          </article></div>
+          <div class="stack-slot" style="--i:5"><article class="course-card reveal">
+            <div class="course-art c-english"><svg class="course-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <defs>
+                <radialGradient id="en-globe" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#c8fff6"/><stop offset=".45" stop-color="#2fb5c9"/><stop offset="1" stop-color="#0b2a7a"/></radialGradient>
+                <linearGradient id="en-bubble" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfe3ff"/></linearGradient>
+              </defs>
+              <circle cx="50" cy="60" r="40" fill="url(#en-globe)"/>
+              <ellipse cx="50" cy="60" rx="18" ry="40" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/>
+              <path d="M10 60 H90 M14 42 H86 M14 78 H86" stroke="#fff" stroke-opacity=".3" stroke-width="1.5" fill="none"/>
+              <path d="M30 40 Q38 34 46 40 Q42 50 34 52 Q26 48 30 40Z M58 66 Q66 60 74 66 Q70 78 62 80 Q56 74 58 66Z" fill="#fff" opacity=".28"/>
+              <path d="M62 62 Q62 52 74 52 H100 Q108 52 108 62 V78 Q108 88 100 88 H86 L76 98 L78 88 H74 Q62 88 62 78 Z" fill="url(#en-bubble)"/>
+              <text x="85" y="78" font-size="18" font-weight="800" fill="#2f6bff" text-anchor="middle" font-family="Unbounded, sans-serif">Aa</text>
+            </svg></div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-course="english" data-role="title">Ingliz tili</h3>
+              <p data-course="english" data-role="desc">Noldan B2 darajagacha, amaliy suhbat va IELTS tayyorgarligi.</p>
+              <button class="btn btn-outline" type="button" data-course-select="english" aria-expanded="false" data-i18n="courses.register">Ro‘yxatdan o‘tish</button>
+            </div>
+          </article></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINNERS (rendered from admin content) -->
+    <section class="section section-alt" id="winners" aria-labelledby="winners-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="kicker" data-i18n="winners.kicker">G‘oliblar</p>
+          <h2 id="winners-title" class="h-xl" data-i18n="winners.title">Markaz talabalarining yutuqlari</h2>
+          <p class="lead" data-i18n="winners.lead">G‘olib o‘quvchilarimizning yutuqlari.</p>
+        </header>
+        <div class="winner-book-wrap">
+          <div class="winner-book-main">
+            <div id="winner-book" class="book" tabindex="0" aria-label="G‘oliblar albomi">
+              <div class="book-spread">
+                <div class="book-fx" aria-hidden="true">
+                  <span class="fx-ring"></span>
+                  <span class="fx-corner fc-tl"></span><span class="fx-corner fc-tr"></span>
+                  <span class="fx-corner fc-bl"></span><span class="fx-corner fc-br"></span>
+                  <span class="fx-trace ft-top"></span><span class="fx-trace ft-bottom"></span>
+                  <span class="fx-trace ft-left"></span><span class="fx-trace ft-right"></span>
+                  <span class="fx-node fn-1"></span><span class="fx-node fn-2"></span><span class="fx-node fn-3"></span><span class="fx-node fn-4"></span>
+                  <span class="fx-scan"></span>
+                </div>
+                <div class="book-pages">
+                  <button id="book-left" class="book-page book-page-left" type="button" aria-label="Oldingi rasm" data-i18n-aria="winners.previous">
+                    <img id="book-left-img" class="book-photo" alt="" hidden>
+                    <span class="book-cover" aria-hidden="true"><img src="assets/images/qamashi-mark.png" alt="" width="84" height="84"><span data-i18n="winners.albumTitle">G‘oliblar albomi</span></span>
+                  </button>
+                  <button id="book-right" class="book-page book-page-right" type="button" aria-label="Keyingi rasm" data-i18n-aria="winners.next">
+                    <img id="book-right-img" class="book-photo" alt="" hidden>
+                    <span class="book-cover" aria-hidden="true"><img src="assets/images/qamashi-mark.png" alt="" width="84" height="84"><span data-i18n="winners.albumTitle">G‘oliblar albomi</span></span>
+                  </button>
+                  <div id="book-leaf" class="book-leaf" aria-hidden="true">
+                    <div class="book-face book-face-front"><img id="leaf-front" class="book-photo" alt=""></div>
+                    <div class="book-face book-face-back"><img id="leaf-back" class="book-photo" alt=""></div>
+                  </div>
+                  <span class="book-spine" aria-hidden="true"></span>
+                </div>
+              </div>
+            </div>
+            <p id="winner-book-caption" class="winner-book-caption"></p>
+            <p id="winner-book-desc" class="winner-book-desc"></p>
+            <p id="winner-book-count" class="winner-book-count" aria-live="polite"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM (rendered from admin content) -->
+    <section class="section" id="team" aria-labelledby="team-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="kicker" data-i18n="team.kicker">Jamoa</p>
+          <h2 id="team-title" class="h-xl" data-i18n="team.title">Bizning mutaxassislar</h2>
+          <p class="lead" data-i18n="team.lead">Quyidagi lavozimlar va ismlar namuna. Haqiqiy xodimlar ma’lumoti administrator tomonidan kiritiladi.</p>
+        </header>
+        <div id="team-grid" class="grid grid-team team-stage"></div>
+      </div>
+    </section>
+
+    <!-- INTERNATIONAL -->
+    <section class="section section-alt" id="intl" aria-labelledby="intl-title">
+      <div class="container intl-grid">
+        <div class="reveal">
+          <p class="kicker" data-i18n="intl.kicker">Xalqaro imkoniyatlar</p>
+          <h2 id="intl-title" class="h-xl" data-i18n="intl.title">Toshkentdan dunyoga</h2>
+          <p class="lead" data-i18n="intl.text">Markaz xalqaro IT ta’lim yo‘nalishlari, hamkor dasturlar va amaliy tajriba almashish imkoniyatlarini targ‘ib qiladi. Dastur tafsilotlari faqat administrator tasdiqlagandan keyin ko‘rsatiladi.</p>
+          <div class="intl-cards">
+            <article class="info-card reveal">
+              <h3 data-i18n="intl.card1.title">Hamkor dasturlar</h3>
+              <p data-i18n="intl.card1.text">Dastur nomi, muddati va shartlari administrator tomonidan kiritiladi.</p>
+            </article>
+            <article class="info-card reveal">
+              <h3 data-i18n="intl.card2.title">Amaliy tajriba</h3>
+              <p data-i18n="intl.card2.text">Xalqaro tadbirlar, konferensiyalar va stajirovka imkoniyatlari.</p>
+            </article>
+            <article class="info-card reveal">
+              <h3 data-i18n="intl.card3.title">Yo‘nalish: O‘zbekiston → Hindiston</h3>
+              <p data-i18n="intl.card3.text">Parvoz yo‘nalishi ramz sifatida ishlatilgan — haqiqiy reys ma’lumoti emas.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDENT PROJECTS -->
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="kicker" data-i18n="projects.kicker">Talabalar loyihalari</p>
+          <h2 id="projects-title" class="h-xl" data-i18n="projects.title">G‘oyadan mahsulotgacha</h2>
+          <p class="lead" data-i18n="projects.lead">Namuna loyiha kartochkalari. Haqiqiy loyihalar rasmi, texnologiyalari va demo havolasi administrator tomonidan qo‘shiladi.</p>
+        </header>
+
+        <div class="grid grid-projects">
+          <article class="project-card reveal">
+            <div class="project-art p1" aria-hidden="true">{ }</div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-i18n="projects.name">Loyiha nomi</h3>
+              <p class="muted" data-i18n="projects.desc">Loyiha tavsifi shu yerda.</p>
+              <ul class="chips"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
+            </div>
+          </article>
+          <article class="project-card reveal">
+            <div class="project-art p2" aria-hidden="true">[ ]</div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-i18n="projects.name">Loyiha nomi</h3>
+              <p class="muted" data-i18n="projects.desc">Loyiha tavsifi shu yerda.</p>
+              <ul class="chips"><li>Python</li><li>Pandas</li></ul>
+            </div>
+          </article>
+          <article class="project-card reveal">
+            <div class="project-art p3" aria-hidden="true">//</div>
+            <div class="card-body">
+              <span class="tag" data-i18n="courses.sample">Namuna ma’lumot</span>
+              <h3 data-i18n="projects.name">Loyiha nomi</h3>
+              <p class="muted" data-i18n="projects.desc">Loyiha tavsifi shu yerda.</p>
+              <ul class="chips"><li>AI</li><li>Python</li></ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- QASHQADARYO REGION MAP -->
+    <section class="section" id="region" aria-labelledby="region-title">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="kicker" data-i18n="region.kicker">Qashqadaryo viloyati</p>
+          <h2 id="region-title" class="h-xl" data-i18n="region.title">Qamashi va tumanlar</h2>
+          <p class="lead" data-i18n="region.lead">Tumanni bosing — uning tarixiy obidalari chiqadi. “Turni boshlash” xaritani ketma-ket tumanlarga olib boradi.</p>
+        </header>
+
+        <div class="region-layout">
+          <div class="region-map-wrap reveal">
+            <div class="region-controls">
+              <button id="tour-start" class="btn btn-red btn-sm" type="button" data-i18n="region.tour">Turni boshlash</button>
+              <button id="tour-next" class="btn btn-ghost btn-sm" type="button" data-i18n="region.next">Keyingi</button>
+              <button id="tour-reset" class="btn btn-ghost btn-sm" type="button" data-i18n="region.all">Butun viloyat</button>
+              <span id="region-state" class="region-state" aria-live="polite"></span>
+            </div>
+            <svg id="region-svg" class="region-svg" viewBox="0 0 800 500" role="group" aria-label="Qashqadaryo viloyati xaritasi">
+              <g id="region-stage" class="region-stage">
+                <path id="region-outline" class="region-outline" d=""></path>
+                <g id="region-trails" aria-hidden="true"></g>
+                <g id="region-boundaries" aria-hidden="true"></g>
+                <g id="region-pins"></g>
+              </g>
+              <g id="national-map" class="national-map-layer" aria-hidden="true">
+                <g id="province-boundaries" aria-hidden="true"></g>
+                <path id="national-route" class="national-route" pathLength="1" d=""></path>
+                <g id="national-markers" aria-hidden="true"></g>
+                <g id="province-labels" aria-hidden="true"></g>
+              </g>
+            </svg>
+            <p class="muted small" data-i18n="region.schematic">Tumanlar bo‘ylab sayohat tugagach, Samarqandgacha bo‘lgan yo‘l va O‘zbekiston viloyatlari xaritada ko‘rsatiladi.</p>
+            <small class="region-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors · ODbL</a> · <a href="https://www.geoboundaries.org/" target="_blank" rel="noreferrer">GeoBoundaries</a></small>
+          </div>
+          <aside id="district-panel" class="card district-panel reveal" aria-live="polite"></aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTRATION (DEMO MODE) -->
+    <section class="section section-alt" id="register" aria-labelledby="reg-title">
+      <div class="container reg-grid">
+        <div class="reveal">
+          <p class="kicker" data-i18n="reg.kicker">Ro‘yxatdan o‘tish</p>
+          <h2 id="reg-title" class="h-xl" data-i18n="reg.title">Kursga ariza topshiring</h2>
+          <p class="demo-banner"><strong>DEMO MODE</strong> <span data-i18n="reg.demo">Ariza faqat shu brauzerda saqlanadi, markazga yuborilmaydi va server tasdig‘i yo‘q.</span></p>
+        </div>
+
+        <form id="reg-form" class="card form reveal" novalidate>
+          <div class="field">
+            <label for="r-name" data-i18n="reg.name">To‘liq ism</label>
+            <input id="r-name" name="name" type="text" autocomplete="name" required minlength="3" aria-describedby="r-name-err">
+            <small id="r-name-err" class="error" role="alert"></small>
+          </div>
+          <div class="field">
+            <label for="r-phone" data-i18n="reg.phone">Telefon raqami</label>
+            <input id="r-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998-97-828-88-09" aria-describedby="r-phone-err">
+            <small id="r-phone-err" class="error" role="alert"></small>
+          </div>
+          <div class="field">
+            <label for="r-course" data-i18n="reg.course">Kurs</label>
+            <select id="r-course" name="course" required aria-describedby="r-course-err">
+              <option value="" data-i18n="reg.coursePick">Kursni tanlang</option>
+            </select>
+            <small id="r-course-err" class="error" role="alert"></small>
+          </div>
+          <button id="reg-submit" class="btn btn-red btn-block" type="submit" data-i18n="reg.submit">Ro‘yxatdan o‘tish</button>
+          <p id="reg-status" class="status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+    <section class="flags-band" id="flags" aria-label="Hamkor davlatlar">
+      <p class="flags-kicker">Hamkorlik yo‘nalishlari</p>
+      <div class="flags-viewport"><div class="flags-marquee"><div class="flags-row"><div class="flag-tile" id="flag-india" data-flag="india"><svg viewBox="0 0 90 60" aria-hidden="true" focusable="false"><rect width="90" height="20" fill="#FF9933"/><rect y="20" width="90" height="20" fill="#FFFFFF"/><rect y="40" width="90" height="20" fill="#138808"/><circle cx="45" cy="30" r="8" fill="none" stroke="#000080" stroke-width="1.5"/><line x1="46.60" y1="30.00" x2="53.00" y2="30.00" stroke="#000080" stroke-width="0.5"/><line x1="46.55" y1="30.41" x2="52.73" y2="32.07" stroke="#000080" stroke-width="0.5"/><line x1="46.39" y1="30.80" x2="51.93" y2="34.00" stroke="#000080" stroke-width="0.5"/><line x1="46.13" y1="31.13" x2="50.66" y2="35.66" stroke="#000080" stroke-width="0.5"/><line x1="45.80" y1="31.39" x2="49.00" y2="36.93" stroke="#000080" stroke-width="0.5"/><line x1="45.41" y1="31.55" x2="47.07" y2="37.73" stroke="#000080" stroke-width="0.5"/><line x1="45.00" y1="31.60" x2="45.00" y2="38.00" stroke="#000080" stroke-width="0.5"/><line x1="44.59" y1="31.55" x2="42.93" y2="37.73" stroke="#000080" stroke-width="0.5"/><line x1="44.20" y1="31.39" x2="41.00" y2="36.93" stroke="#000080" stroke-width="0.5"/><line x1="43.87" y1="31.13" x2="39.34" y2="35.66" stroke="#000080" stroke-width="0.5"/><line x1="43.61" y1="30.80" x2="38.07" y2="34.00" stroke="#000080" stroke-width="0.5"/><line x1="43.45" y1="30.41" x2="37.27" y2="32.07" stroke="#000080" stroke-width="0.5"/><line x1="43.40" y1="30.00" x2="37.00" y2="30.00" stroke="#000080" stroke-width="0.5"/><line x1="43.45" y1="29.59" x2="37.27" y2="27.93" stroke="#000080" stroke-width="0.5"/><line x1="43.61" y1="29.20" x2="38.07" y2="26.00" stroke="#000080" stroke-width="0.5"/><line x1="43.87" y1="28.87" x2="39.34" y2="24.34" stroke="#000080" stroke-width="0.5"/><line x1="44.20" y1="28.61" x2="41.00" y2="23.07" stroke="#000080" stroke-width="0.5"/><line x1="44.59" y1="28.45" x2="42.93" y2="22.27" stroke="#000080" stroke-width="0.5"/><line x1="45.00" y1="28.40" x2="45.00" y2="22.00" stroke="#000080" stroke-width="0.5"/><line x1="45.41" y1="28.45" x2="47.07" y2="22.27" stroke="#000080" stroke-width="0.5"/><line x1="45.80" y1="28.61" x2="49.00" y2="23.07" stroke="#000080" stroke-width="0.5"/><line x1="46.13" y1="28.87" x2="50.66" y2="24.34" stroke="#000080" stroke-width="0.5"/><line x1="46.39" y1="29.20" x2="51.93" y2="26.00" stroke="#000080" stroke-width="0.5"/><line x1="46.55" y1="29.59" x2="52.73" y2="27.93" stroke="#000080" stroke-width="0.5"/></svg><span>Hindiston</span></div><div class="flag-tile" id="flag-uae" data-flag="uae"><svg viewBox="0 0 90 60" aria-hidden="true" focusable="false"><rect width="90" height="20" fill="#00732F"/><rect y="20" width="90" height="20" fill="#FFFFFF"/><rect y="40" width="90" height="20" fill="#000000"/><rect width="24" height="60" fill="#FF0000"/></svg><span>BAA</span></div><div class="flag-tile" id="flag-china" data-flag="china"><svg viewBox="0 0 90 60" aria-hidden="true" focusable="false"><rect width="90" height="60" fill="#DE2910"/><polygon points="14.00,6.00 15.97,11.28 21.61,11.53 17.20,15.04 18.70,20.47 14.00,17.36 9.30,20.47 10.80,15.04 6.39,11.53 12.03,11.28" fill="#FFDE00"/><polygon points="30.00,2.00 30.74,3.98 32.85,4.07 31.20,5.39 31.76,7.43 30.00,6.26 28.24,7.43 28.80,5.39 27.15,4.07 29.26,3.98" fill="#FFDE00"/><polygon points="36.00,8.00 36.74,9.98 38.85,10.07 37.20,11.39 37.76,13.43 36.00,12.26 34.24,13.43 34.80,11.39 33.15,10.07 35.26,9.98" fill="#FFDE00"/><polygon points="36.00,16.00 36.74,17.98 38.85,18.07 37.20,19.39 37.76,21.43 36.00,20.26 34.24,21.43 34.80,19.39 33.15,18.07 35.26,17.98" fill="#FFDE00"/><polygon points="30.00,22.00 30.74,23.98 32.85,24.07 31.20,25.39 31.76,27.43 30.00,26.26 28.24,27.43 28.80,25.39 27.15,24.07 29.26,23.98" fill="#FFDE00"/></svg><span>Xitoy</span></div><div class="flag-tile" id="flag-tj" data-flag="tj"><svg viewBox="0 0 1280 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="1280" height="183" fill="#DA121A"/><rect y="183" width="1280" height="274" fill="#FFFFFF"/><rect y="457" width="1280" height="183" fill="#1B7A34"/><path d="M525 385 Q640 335 755 385 L735 428 Q640 408 545 428 Z" fill="#F8C300"/><path d="M612 300 Q640 262 668 300 L660 332 Q640 322 620 332 Z" fill="#F8C300"/><rect x="634" y="292" width="12" height="60" fill="#F8C300"/><polygon points="522.0,324.0 527.3,338.7 542.9,339.2 530.6,348.8 534.9,363.8 522.0,355.0 509.1,363.8 513.4,348.8 501.1,339.2 516.7,338.7" fill="#F8C300"/><polygon points="537.8,265.0 543.1,279.7 558.7,280.2 546.4,289.8 550.7,304.8 537.8,296.0 524.9,304.8 529.2,289.8 516.9,280.2 532.5,279.7" fill="#F8C300"/><polygon points="581.0,221.8 586.3,236.5 601.9,237.0 589.6,246.6 593.9,261.6 581.0,252.8 568.1,261.6 572.4,246.6 560.1,237.0 575.7,236.5" fill="#F8C300"/><polygon points="640.0,206.0 645.3,220.7 660.9,221.2 648.6,230.8 652.9,245.8 640.0,237.0 627.1,245.8 631.4,230.8 619.1,221.2 634.7,220.7" fill="#F8C300"/><polygon points="699.0,221.8 704.3,236.5 719.9,237.0 707.6,246.6 711.9,261.6 699.0,252.8 686.1,261.6 690.4,246.6 678.1,237.0 693.7,236.5" fill="#F8C300"/><polygon points="742.2,265.0 747.5,279.7 763.1,280.2 750.8,289.8 755.1,304.8 742.2,296.0 729.3,304.8 733.6,289.8 721.3,280.2 736.9,279.7" fill="#F8C300"/><polygon points="758.0,324.0 763.3,338.7 778.9,339.2 766.6,348.8 770.9,363.8 758.0,355.0 745.1,363.8 749.4,348.8 737.1,339.2 752.7,338.7" fill="#F8C300"/></svg><span>Tojikiston</span></div><div class="flag-tile" id="flag-kg" data-flag="kg"><svg viewBox="0 0 90 60" aria-hidden="true" focusable="false"><rect width="90" height="60" fill="#E8112D"/><circle cx="45" cy="30" r="13" fill="#FFEF00"/><line x1="58.50" y1="30.00" x2="65.00" y2="30.00" stroke="#FFEF00" stroke-width="0.7"/><line x1="58.33" y1="32.11" x2="64.75" y2="33.13" stroke="#FFEF00" stroke-width="0.7"/><line x1="57.84" y1="34.17" x2="64.02" y2="36.18" stroke="#FFEF00" stroke-width="0.7"/><line x1="57.03" y1="36.13" x2="62.82" y2="39.08" stroke="#FFEF00" stroke-width="0.7"/><line x1="55.92" y1="37.94" x2="61.18" y2="41.76" stroke="#FFEF00" stroke-width="0.7"/><line x1="54.55" y1="39.55" x2="59.14" y2="44.14" stroke="#FFEF00" stroke-width="0.7"/><line x1="52.94" y1="40.92" x2="56.76" y2="46.18" stroke="#FFEF00" stroke-width="0.7"/><line x1="51.13" y1="42.03" x2="54.08" y2="47.82" stroke="#FFEF00" stroke-width="0.7"/><line x1="49.17" y1="42.84" x2="51.18" y2="49.02" stroke="#FFEF00" stroke-width="0.7"/><line x1="47.11" y1="43.33" x2="48.13" y2="49.75" stroke="#FFEF00" stroke-width="0.7"/><line x1="45.00" y1="43.50" x2="45.00" y2="50.00" stroke="#FFEF00" stroke-width="0.7"/><line x1="42.89" y1="43.33" x2="41.87" y2="49.75" stroke="#FFEF00" stroke-width="0.7"/><line x1="40.83" y1="42.84" x2="38.82" y2="49.02" stroke="#FFEF00" stroke-width="0.7"/><line x1="38.87" y1="42.03" x2="35.92" y2="47.82" stroke="#FFEF00" stroke-width="0.7"/><line x1="37.06" y1="40.92" x2="33.24" y2="46.18" stroke="#FFEF00" stroke-width="0.7"/><line x1="35.45" y1="39.55" x2="30.86" y2="44.14" stroke="#FFEF00" stroke-width="0.7"/><line x1="34.08" y1="37.94" x2="28.82" y2="41.76" stroke="#FFEF00" stroke-width="0.7"/><line x1="32.97" y1="36.13" x2="27.18" y2="39.08" stroke="#FFEF00" stroke-width="0.7"/><line x1="32.16" y1="34.17" x2="25.98" y2="36.18" stroke="#FFEF00" stroke-width="0.7"/><line x1="31.67" y1="32.11" x2="25.25" y2="33.13" stroke="#FFEF00" stroke-width="0.7"/><line x1="31.50" y1="30.00" x2="25.00" y2="30.00" stroke="#FFEF00" stroke-width="0.7"/><line x1="31.67" y1="27.89" x2="25.25" y2="26.87" stroke="#FFEF00" stroke-width="0.7"/><line x1="32.16" y1="25.83" x2="25.98" y2="23.82" stroke="#FFEF00" stroke-width="0.7"/><line x1="32.97" y1="23.87" x2="27.18" y2="20.92" stroke="#FFEF00" stroke-width="0.7"/><line x1="34.08" y1="22.06" x2="28.82" y2="18.24" stroke="#FFEF00" stroke-width="0.7"/><line x1="35.45" y1="20.45" x2="30.86" y2="15.86" stroke="#FFEF00" stroke-width="0.7"/><line x1="37.06" y1="19.08" x2="33.24" y2="13.82" stroke="#FFEF00" stroke-width="0.7"/><line x1="38.87" y1="17.97" x2="35.92" y2="12.18" stroke="#FFEF00" stroke-width="0.7"/><line x1="40.83" y1="17.16" x2="38.82" y2="10.98" stroke="#FFEF00" stroke-width="0.7"/><line x1="42.89" y1="16.67" x2="41.87" y2="10.25" stroke="#FFEF00" stroke-width="0.7"/><line x1="45.00" y1="16.50" x2="45.00" y2="10.00" stroke="#FFEF00" stroke-width="0.7"/><line x1="47.11" y1="16.67" x2="48.13" y2="10.25" stroke="#FFEF00" stroke-width="0.7"/><line x1="49.17" y1="17.16" x2="51.18" y2="10.98" stroke="#FFEF00" stroke-width="0.7"/><line x1="51.13" y1="17.97" x2="54.08" y2="12.18" stroke="#FFEF00" stroke-width="0.7"/><line x1="52.94" y1="19.08" x2="56.76" y2="13.82" stroke="#FFEF00" stroke-width="0.7"/><line x1="54.55" y1="20.45" x2="59.14" y2="15.86" stroke="#FFEF00" stroke-width="0.7"/><line x1="55.92" y1="22.06" x2="61.18" y2="18.24" stroke="#FFEF00" stroke-width="0.7"/><line x1="57.03" y1="23.87" x2="62.82" y2="20.92" stroke="#FFEF00" stroke-width="0.7"/><line x1="57.84" y1="25.83" x2="64.02" y2="23.82" stroke="#FFEF00" stroke-width="0.7"/><line x1="58.33" y1="27.89" x2="64.75" y2="26.87" stroke="#FFEF00" stroke-width="0.7"/><circle cx="45" cy="30" r="4" fill="#E8112D"/></svg><span>Qirg‘iziston</span></div></div></div></div>
+    </section>
+
+    <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="brand" href="#home" aria-label="Qamashi IT Centre">
+        <img src="assets/images/qamashi-mark.png" alt="" width="44" height="44">
+        <span class="brand-text">QAMASHI<small>IT CENTRE</small></span>
+      </a>
+      <div class="footer-meta">
+        <p class="muted" data-i18n="footer.text">© 2026 Qamashi IT Centre. Barcha huquqlar himoyalangan.</p>
+        <p class="muted small" data-i18n="footer.demo">Demo versiya — namuna ma’lumotlar.</p>
+        <p class="small"><a class="admin-link" href="admin.html" data-i18n="footer.admin">Admin panel</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Detail dialog -->
+  <dialog id="detail-dialog" class="modal" aria-label="Batafsil">
+    <div class="modal-inner">
+      <button id="detail-close" class="modal-close" type="button" aria-label="Yopish" data-i18n-aria="common.close">×</button>
+      <div id="detail-body"></div>
+    </div>
+  </dialog>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="js/i18n.js" defer></script>
+  <script src="js/content.js" defer></script>
+  <script src="js/registration.js" defer></script>
+  <script src="js/region-boundaries.js" defer></script>
+  <script src="js/uzbekistan-boundaries.js" defer></script>
+  <script src="js/regions.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/effects.js" defer></script>
+</body>
+</html>
